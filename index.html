@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM Machine</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #283e51, #485563);
+      margin: 0;
+    }
+    .atm {
+      background: #111;
+      width: 360px;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 10px 25px rgba(0,0,0,0.6);
+      color: white;
+    }
+    .screen {
+      background: #0f2027;
+      color: #00ff99;
+      height: 120px;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: inset 0px 0px 10px rgba(0,255,150,0.3);
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    button {
+      height: 60px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+    }
+    button:hover {
+      background: #444;
+    }
+    .action {
+      margin-top: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .deposit { background: #2980b9; }
+    .withdraw { background: #c0392b; }
+    .balance { background: #27ae60; }
+    .logout { background: #8e44ad; grid-column: span 2; }
+    .clear { background: #f39c12; }
+    .enter { background: #16a085; grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <div class="atm">
+    <div class="screen" id="screen">Enter PIN to Login</div>
+
+    <!-- Number Pad -->
+    <div class="keypad">
+      <button onclick="press(1)">1</button>
+      <button onclick="press(2)">2</button>
+      <button onclick="press(3)">3</button>
+      <button onclick="press(4)">4</button>
+      <button onclick="press(5)">5</button>
+      <button onclick="press(6)">6</button>
+      <button onclick="press(7)">7</button>
+      <button onclick="press(8)">8</button>
+      <button onclick="press(9)">9</button>
+      <button onclick="clearInput()" class="clear">C</button>
+      <button onclick="press(0)">0</button>
+      <button onclick="enter()" class="enter">ENTER</button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action">
+      <button class="balance" onclick="checkBalance()">Balance</button>
+      <button class="deposit" onclick="deposit()">Deposit</button>
+      <button class="withdraw" onclick="withdraw()">Withdraw</button>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    let screen = document.getElementById("screen");
+    let input = "";
+    let balance = 1000;
+    const correctPin = "1234";
+    let loggedIn = false;
+
+    function press(num) {
+      input += num;
+      screen.innerText = "*".repeat(input.length);
+    }
+
+    function clearInput() {
+      input = "";
+      screen.innerText = "Cleared. Enter again.";
+    }
+
+    function enter() {
+      if (!loggedIn) {
+        if (input === correctPin) {
+          loggedIn = true;
+          screen.innerText = "✅ Login Successful!\nChoose an option below.";
+        } else {
+          screen.innerText = "❌ Wrong PIN. Try again.";
+        }
+      }
+      input = "";
+    }
+
+    function checkBalance() {
+      if (loggedIn) {
+        screen.innerText = "💰 Balance: $" + balance;
+      } else {
+        screen.innerText = "Please login first.";
+      }
+    }
+
+    function withdraw() {
+      if (loggedIn) {
+        let amount = prompt("Enter amount to withdraw:");
+        if (amount && !isNaN(amount)) {
+          amount = parseFloat(amount);
+          if (amount <= balance) {
+            balance -= amount;
+            screen.innerText = "✅ Withdrawn $" + amount + "\n💰 New Balance: $" + balance;
+          } else {
+            screen.innerText = "❌ Insufficient funds!";
+          }
+        }
+      } else {
+        screen.innerText = "Please login first.";
+      }
+    }
+
+    function deposit() {
+      if (loggedIn) {
+        let amount = prompt("Enter amount to deposit:");
+        if (amount && !isNaN(amount)) {
+          amount = parseFloat(amount);
+          balance += amount;
+          screen.innerText = "✅ Deposited $" + amount + "\n💰 New Balance: $" + balance;
+        }
+      } else {
+        screen.innerText = "Please login first.";
+      }
+    }
+
+    function logout() {
+      loggedIn = false;
+      balance = balance; // keeps balance
+      screen.innerText = "🔒 Logged out.\nEnter PIN to login.";
+    }
+  </script>
+</body>
+</html>
